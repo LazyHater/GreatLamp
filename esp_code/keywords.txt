@@ -1,0 +1,4 @@
+  Lamp KEYWORD1
+  readLevel KEYWORD2
+  setLevel KEYWORD2
+  toggle KEYWORD2

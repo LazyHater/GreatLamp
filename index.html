@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="author" content="">
+  <meta name="description" content="">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+  <link href="css/style.css" rel="stylesheet" type='text/css'>
+  <link rel="icon" type="image/png" href="https://image.ibb.co/fxD5An/favicon2.png">
+
+  <title>Let's make lampka xD again</title>
+</head>
+
+<body>
+  <main class="container-fluid">
+    <div class="col-12 text-center">
+      <img id="light" src="img/wait.png" alt="light level image" onclick="toggleLamp()">
+    </div>
+    <div class="row">
+      <div class="col text-center top-buffer">
+        <h1>Let's make lampka xD again</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-center">
+        <button id="lv0" class="raise" onclick="setLevel(0)">xd</button>
+        <button id="lv1" class="raise" onclick="setLevel(1)">xD</button>
+        <button id="lv2" class="raise" onclick="setLevel(2)">XD</button>
+        <button id="lv3" class="raise" onclick="setLevel(3)">XDDD</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col top-buffer text-center">
+        <a href="#" data-toggle="collapse" data-target="#settingsForm" class="text-muted">.xX settings Xx.</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div id="settingsForm" class="col-4 offset-4 top-buffer text-center collapse">
+        <input id="ssid" type="text" class="form-control" placeholder="SSID">
+        <input id="password" type="text" class="form-control top-buffer" placeholder="Password">
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+              <input type="button" class="form-control top-buffer btn btn-danger" value="Restart Lamp" onclick="restartLamp()">
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <input type="button" class="form-control top-buffer btn btn-warning" value="Submit" onclick="setSettings($('#ssid').val(), $('#password').val());">
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+.raise:hover,
+.raise:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  -webkit-transform: translateY(-0.25em);
+          transform: translateY(-0.25em);
+}
+
+.raise {
+  --color: #ffa260;
+  --hover: #e5ff60;
+}
+
+.xd {
+  background: #555;
+}
+
+body {
+  color: #fff;
+  background: #000;
+}
+.top-buffer { margin-top:20px; }
+button {
+  color: var(--color);
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+  background: none;
+  border: 2px solid;
+  font: inherit;
+  line-height: 1;
+  margin: 0.5em;
+  padding: 1em 2em;
+
+  font: 400 17px/0.8 'Cookie', Helvetica, sans-serif;
+  color: #ff0;
+  text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+}
+
+button:hover, button:focus {
+  border-color: var(--hover);
+  color: #fff;
+}
+
+h1 {
+    font: 400 50px/0.8 'Cookie', Helvetica, sans-serif;
+    color: #ff0;
+    text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+}
