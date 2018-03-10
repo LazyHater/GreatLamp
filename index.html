@@ -19,7 +19,7 @@
 <body>
   <main class="container-fluid">
     <div class="col-12 text-center">
-      <img id="light" src="img/wait.png" alt="light level image" onclick="toggleLamp()">
+      <img id="light" src="img/wait.png" alt="light level image">
     </div>
     <div class="row">
       <div class="col text-center top-buffer">
@@ -29,10 +29,10 @@
 
     <div class="row">
       <div class="col text-center">
-        <button id="lv0" class="raise" onclick="setLevel(0)">xd</button>
-        <button id="lv1" class="raise" onclick="setLevel(1)">xD</button>
-        <button id="lv2" class="raise" onclick="setLevel(2)">XD</button>
-        <button id="lv3" class="raise" onclick="setLevel(3)">XDDD</button>
+        <button id="lv0" class="raise">xd</button>
+        <button id="lv1" class="raise">xD</button>
+        <button id="lv2" class="raise">XD</button>
+        <button id="lv3" class="raise">XDDD</button>
       </div>
     </div>
 
@@ -42,20 +42,19 @@
       </div>
     </div>
 
-    <div class="row">
-      <div id="settingsForm" class="col-4 offset-4 top-buffer text-center collapse">
-        <input id="ssid" type="text" class="form-control" placeholder="SSID">
-        <input id="password" type="text" class="form-control top-buffer" placeholder="Password">
-        <div class="row">
-          <div class="col-md-6 col-sm-12">
-              <input type="button" class="form-control top-buffer btn btn-danger" value="Restart Lamp" onclick="restartLamp()">
-          </div>
-          <div class="col-md-6 col-sm-12">
-            <input type="button" class="form-control top-buffer btn btn-warning" value="Submit" onclick="setSettings($('#ssid').val(), $('#password').val());">
-          </div>
+    <div class="row top-buffer justify-content-center">
+      <form id="settingsForm" class="collapse">
+        <div class="form-group">
+          <input type="text" class="form-control" id="ssid" placeholder="SSID">
         </div>
-      </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="pass" placeholder="Password">
+        </div>
+        <button id="subbtn" type="submit" class="btn btn-primary btn-lg btn-block btn btn-warning no-margin">Submit</button>
+        <button id="restart" class="form-control top-buffer btn btn-danger btn-lg no-margin">Restart</button>
+      </form>
     </div>
+
   </main>
 
 

@@ -8,7 +8,7 @@ let imgUrls = [
   "img/wait.png", // wait
 ];
 */
-let imgUrls = [
+var imgUrls = [
   "https://image.ibb.co/kWdiwS/lv0.png", // lv0
   "https://image.ibb.co/gmuOwS/lv1.png", // lv1
   "https://image.ibb.co/c3vkAn/lv2.png", // lv2
@@ -17,10 +17,39 @@ let imgUrls = [
   "https://image.ibb.co/kAZ1i7/wait.png", // wait
 ];
 
-//let baseUrl = "http://192.168.1.8/";
-let baseUrl = "/";
+var baseUrl = "http://192.168.1.9/";
+//let baseUrl = "/";
 
 $( document ).ready(function() {
+  $("#subbtn").click(function(){
+     setSettings($('#ssid').val(), $('#password').val());
+     alert('Done');
+  });
+
+  $("#lv0").click(function(){
+      setLevel(0);
+  });
+
+  $("#lv1").click(function(){
+      setLevel(1);
+  });
+
+  $("#lv2").click(function(){
+      setLevel(2);
+  });
+
+  $("#lv3").click(function(){
+      setLevel(3);
+  });
+
+  $("#light").click(function(){
+      toggleLamp();
+  });
+
+  $("#restart").click(function(){
+      restartLamp();
+  });
+
   $.ajax({
     url: baseUrl + "lamp",
     success: function( data ) {
