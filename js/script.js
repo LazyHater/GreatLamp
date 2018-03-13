@@ -21,6 +21,8 @@ var baseUrl = "http://192.168.1.9/";
 //let baseUrl = "/";
 
 $( document ).ready(function() {
+
+//  $('#wifiModal').modal('show');
   $("#subbtn").click(function(){
      setSettings($('#ssid').val(), $('#password').val());
      alert('Done');
@@ -50,6 +52,10 @@ $( document ).ready(function() {
       restartLamp();
   });
 
+  $("#mqttbtn").click(function(){
+      openMqttModal();
+  });
+
   $.ajax({
     url: baseUrl + "lamp",
     success: function( data ) {
@@ -60,6 +66,30 @@ $( document ).ready(function() {
   });
 });
 
+function getMqttHost() {
+  $.ajax({
+    type: "POST",
+    url: baseUrl + "mqtthost",
+    success: function( data ) {
+        console.log(data);
+    },
+    error: onError,
+  });
+}
+
+function openMqttModal() {
+  $.ajax({
+    url: baseUrl + "mqttstatus",
+    success: function( data ) {
+        $('#mqttHostTable').html(data.mqtt_host);
+        $('#mqttEnableTable').html(data.mqtt_enabled);
+        $('#mqttConnectedTable').html(data.mqtt_connected);
+        $('#mqttModal').modal('show');
+    },
+    error: onError,
+  });
+}
+
 function setLevel(lv) {
   $.ajax({
     type: "POST",
@@ -68,6 +98,24 @@ function setLevel(lv) {
     success: function( data ) {
         $("#lv" + data.level).first().focus();
         changeImageLevel(data.level);
+    },
+    error: onError,
+  });
+}
+function setMqttHost(hostname) {
+  console.log({
+    "ssid": ssid,
+    "password": password
+  });
+  $.ajax({
+    type: "POST",
+    url: baseUrl + "settings",
+    data: {
+      "ssid": ssid,
+      "password": password
+    },
+    success: function( data ) {
+        console.log(data);
     },
     error: onError,
   });
@@ -104,7 +152,8 @@ function restartLamp() {
 
 function toggleLamp() {
   $.ajax({
-    url: baseUrl + "toggle",
+      //url: baseUrl + "toggle",
+      url: "http://192.168.1.9/toggle",
     success: function( data ) {
         $("#lv" + data.level).first().focus();
         changeImageLevel(data.level);
@@ -112,6 +161,8 @@ function toggleLamp() {
     error: onError,
   });
 }
+
+
 
 function changeImageLevel(lv) {
     $("#light")
