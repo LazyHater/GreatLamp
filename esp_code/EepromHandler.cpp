@@ -23,15 +23,15 @@ bool EepromHandler::clearMqttHost() {
 }
 
 bool EepromHandler::writeWifiParameters(String ssid, String password) {
-  if (ssid.length() > _ssid_space) {
-    //Serial.println("Not enough space to store ssid!");
-    return false;
-  }
+	if (ssid.length() > _ssid_space) {
+		//Serial.println("Not enough space to store ssid!");
+		return false;
+	}
 
-  if (password.length() > _password_space) {
-    //Serial.println("Not enough space to store password!");
-    return false;
-  }
+	if (password.length() > _password_space) {
+		//Serial.println("Not enough space to store password!");
+		return false;
+	}
 
 	clearWifiParameters();
 
@@ -52,10 +52,10 @@ bool EepromHandler::writeWifiParameters(String ssid, String password) {
 }
 
 bool EepromHandler::writeMqttHost(String mqtt_host) {
-  if (mqtt_host.length() > _mqtt_host_space) {
-    //Serial.println("Not enough space to store ssid!");
-    return false;
-  }
+	if (mqtt_host.length() > _mqtt_host_space) {
+		//Serial.println("Not enough space to store ssid!");
+		return false;
+	}
 
 	clearMqttHost();
 
@@ -72,13 +72,13 @@ bool EepromHandler::writeMqttHost(String mqtt_host) {
 }
 
 bool EepromHandler::readMqttHost() {
-  _mqtt_host = "";
+	_mqtt_host = "";
 
 	//Serial.println("Starting eeprom read");
 
 	for (size_t i = _ssid_space + _password_space; i < (_ssid_space + _password_space + _mqtt_host_space); ++i) {
-    char tmp = char(EEPROM.read(i));
-    if (tmp == 0) break;
+		char tmp = char(EEPROM.read(i));
+		if (tmp == 0) break;
 		_mqtt_host += tmp;
 	}
 
@@ -90,19 +90,19 @@ bool EepromHandler::readMqttHost() {
 }
 
 bool EepromHandler::readWiFiParameters() {
-  _ssid = "";
-  _password = "";
+	_ssid = "";
+	_password = "";
 
 	//Serial.println("Starting eeprom read");
 
 	for (size_t i = 0; i < _ssid_space; ++i) {
-    char tmp = char(EEPROM.read(i));
-    if (tmp == 0) break;
+		char tmp = char(EEPROM.read(i));
+		if (tmp == 0) break;
 		_ssid += tmp;
 	}
 	for (size_t i = 0; i < _password_space; ++i) {
-    char tmp = char(EEPROM.read(_ssid_space + i));
-    if (tmp == 0) break;
+		char tmp = char(EEPROM.read(_ssid_space + i));
+		if (tmp == 0) break;
 		_password += tmp;
 	}
 

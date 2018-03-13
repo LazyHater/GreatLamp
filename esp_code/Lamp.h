@@ -1,7 +1,7 @@
 // Lamp.h
 
-#ifndef _LAMP_h
-#define _LAMP_h
+#ifndef LAMP_h
+#define LAMP_h
 
 class Lamp {
 public:
@@ -14,4 +14,4 @@ public:
   const int write_pin;
 };
 
-#endif
+#endif // LAMP_h
