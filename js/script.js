@@ -8,6 +8,9 @@ let imgUrls = [
   "img/wait.png", // wait
 ];
 */
+var baseUrl = "http://192.168.1.9/";
+//var baseUrl = "/";
+
 var imgUrls = [
   "https://image.ibb.co/kWdiwS/lv0.png", // lv0
   "https://image.ibb.co/gmuOwS/lv1.png", // lv1
@@ -17,15 +20,22 @@ var imgUrls = [
   "https://image.ibb.co/kAZ1i7/wait.png", // wait
 ];
 
-var baseUrl = "http://192.168.1.9/";
-//let baseUrl = "/";
+
 
 $( document ).ready(function() {
+  $("#alert").hide();
+  $("#light").attr('src', imgUrls[5]);
 
-//  $('#wifiModal').modal('show');
-  $("#subbtn").click(function(){
-     setSettings($('#ssid').val(), $('#password').val());
-     alert('Done');
+  $("#wifiSettingsForm").submit(function(){
+      $('#wifiModal').modal('hide');
+      setWifiSettings($('#ssid').val(), $('#password').val());
+      return false;
+  });
+
+  $("#mqttSettingsForm").submit(function(){
+      $('#mqttModal').modal('hide');
+      setMqttHost($('#mqtthost').val());
+      return false;
   });
 
   $("#lv0").click(function(){
@@ -65,6 +75,23 @@ $( document ).ready(function() {
     error: onError,
   });
 });
+function successAlert(msg) {
+  $('#alert' ).removeClass( "alert-danger" );
+  $('#alert' ).addClass( "alert-warning" );
+  $('#alert').html("<strong>Success!</strong> " + msg)
+  $("#alert").fadeTo(2000, 500).slideUp(500, function(){
+      $("#alert").slideUp(500);
+  });
+}
+
+function errorAlert(msg) {
+  $('#alert' ).removeClass( "alert-warning" );
+  $('#alert' ).addClass( "alert-danger" );
+  $('#alert').html("<strong>Error!</strong> " + msg)
+  $("#alert").fadeTo(2000, 500).slideUp(500, function(){
+      $("#alert").slideUp(500);
+  });
+}
 
 function getMqttHost() {
   $.ajax({
@@ -103,38 +130,35 @@ function setLevel(lv) {
   });
 }
 function setMqttHost(hostname) {
-  console.log({
-    "ssid": ssid,
-    "password": password
-  });
   $.ajax({
     type: "POST",
-    url: baseUrl + "settings",
+    url: baseUrl + "mqtthost",
     data: {
-      "ssid": ssid,
-      "password": password
+      "mqtt_host": hostname,
     },
     success: function( data ) {
         console.log(data);
+        successAlert("Mqtt host has been updated!");
     },
     error: onError,
   });
 }
 
-function setSettings(ssid, password) {
+function setWifiSettings(ssid, password) {
   console.log({
     "ssid": ssid,
     "password": password
   });
   $.ajax({
     type: "POST",
-    url: baseUrl + "settings",
+    url: baseUrl + "wifisettings",
     data: {
       "ssid": ssid,
       "password": password
     },
     success: function( data ) {
         console.log(data);
+        successAlert("Wifi settings have been updated!");
     },
     error: onError,
   });
@@ -152,8 +176,8 @@ function restartLamp() {
 
 function toggleLamp() {
   $.ajax({
-      //url: baseUrl + "toggle",
-      url: "http://192.168.1.9/toggle",
+      url: baseUrl + "toggle",
+      //url: "http://192.168.1.9/toggle",
     success: function( data ) {
         $("#lv" + data.level).first().focus();
         changeImageLevel(data.level);
@@ -161,7 +185,6 @@ function toggleLamp() {
     error: onError,
   });
 }
-
 
 
 function changeImageLevel(lv) {
@@ -173,6 +196,8 @@ function changeImageLevel(lv) {
 }
 
 function onError( obj, type, except ) {
-  console.log(obj, type, except);
+  console.log(obj);
+  console.log(obj.responseJSON.error);
+  errorAlert(obj.responseJSON.error);
   changeImageLevel(4);
 }

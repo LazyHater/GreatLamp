@@ -36,6 +36,11 @@ int Lamp::readLevel() {
 }
 
 void Lamp::toggle() {
+	int next_level = (readLevel() + 1 ) % 4;
+	setLevel(next_level);
+}
+
+void Lamp::_toggle() {
 	digitalWrite(write_pin, HIGH);
 	delay(80);
 	digitalWrite(write_pin, LOW);
@@ -46,6 +51,6 @@ void Lamp::setLevel(int level) {
 	if (level < 0 || level > 3) return;
 
 	while (level != readLevel()) {
-		toggle();
+		_toggle();
 	}
 }

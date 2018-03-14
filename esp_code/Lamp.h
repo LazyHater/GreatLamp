@@ -12,6 +12,9 @@ public:
 
   const int read_pin;
   const int write_pin;
+  
+private:
+  void _toggle();
 };
 
 #endif // LAMP_h

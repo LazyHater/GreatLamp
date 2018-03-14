@@ -18,6 +18,8 @@
 
 <body>
   <main class="container-fluid">
+    <div id="alert" class="alert  top-buffer" role="alert">
+    </div>
     <div class="col-12 text-center">
       <img id="light" src="img/wait.png" alt="light level image" class="img-responsive">
     </div>
@@ -68,11 +70,9 @@
             <form id="wifiSettingsForm">
               <div class="form-group top-buffer">
                 <div class="form-group">
-                  <input type="text" class="form-control" id="ssid" placeholder="SSID">
+                  <input id="ssid" type="text" class="form-control"  placeholder="SSID">
                 </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" id="pass" placeholder="Password">
-                </div>
+                  <input id="password" type="text" class="form-control" placeholder="Password">
                 <button id="wifisub" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
               </div>
             </form>
@@ -109,11 +109,10 @@
                 </tr>
               </tbody>
             </table>
-            <span id="mqttdata"></span>
-            <form id="mqttSettingsForm">
+            <form id="mqttSettingsForm" >
               <div class="form-group">
-                <input type="text" class="form-control top-buffer" id="mqtthost" placeholder="New Mqtt hostname">
-                <button id="mqttsub" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
+                <input id="mqtthost" type="text" class="form-control top-buffer"  placeholder="New Mqtt hostname">
+                <button id="mqttsub" action="#" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
               </div>
             </form>
           </div>
