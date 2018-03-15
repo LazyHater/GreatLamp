@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-  <meta name="author" content="">
-  <meta name="description" content="">
+  <meta name="author" content="Dominik Hofman">
+  <meta name="description" content="Best lampka device">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -45,14 +45,13 @@
     </div>
 
     <row id="settings" class="row top-buffer justify-content-center text-center collapse">
-
-      <button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#wifiModal">
+      <button id="wifibtn" type="button" class="btn btn-warning btn-lg">
         Wifi Settings
       </button>
       <button id="mqttbtn" type="button" class="btn btn-warning btn-lg">
         Mqtt Settings
       </button>
-      <button id="docsbtn" type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#mqttModal">
+      <button id="docsbtn" type="button" class="btn btn-warning btn-lg">
         Docs
       </button>
       <button id="restart" class="btn btn-danger btn-lg">
@@ -66,28 +65,8 @@
       <div class="modal-dialog" role="document" >
         <div class="modal-content">
           <div class="modal-body modal-style">
-            <h5 class="modal-title" id="exampleModalLabel">Wifi settings</h5>
-            <form id="wifiSettingsForm">
-              <div class="form-group top-buffer">
-                <div class="form-group">
-                  <input id="ssid" type="text" class="form-control"  placeholder="SSID">
-                </div>
-                  <input id="password" type="text" class="form-control" placeholder="Password">
-                <button id="wifisub" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="mqttModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document" >
-        <div class="modal-content">
-          <div class="modal-body modal-style">
-            <h5 class="modal-title" id="exampleModalLabel">Mqtt settings</h5>
-            <table class="table table-dark top-buffer">
+            <h5 class="modal-title">Wifi settings</h5>
+            <table class="table table-dark top-buffer" id="wifiTable">
               <thead>
                 <tr>
                   <th scope="col">Key</th>
@@ -95,24 +74,45 @@
                 </tr>
               </thead>
               <tbody>
+              </tbody>
+            </table>
+            <form id="wifiSettingsForm">
+              <div class="form-group top-buffer">
+                <div class="form-group">
+                  <input id="ssid" type="text" class="form-control"  placeholder="New SSID">
+                </div>
+                <input id="password" type="text" class="form-control" placeholder="New Password">
+                <button id="wifisub" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
+                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="mqttModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document" >
+        <div class="modal-content">
+          <div class="modal-body modal-style">
+            <h5 class="modal-title">Mqtt settings</h5>
+            <table class="table table-dark top-buffer" id="mqttTable">
+              <thead>
                 <tr>
-                  <td>Mqtt host</td>
-                  <td id="mqttHostTable"></td>
+                  <th scope="col">Key</th>
+                  <th scope="col">Value</th>
                 </tr>
-                <tr>
-                  <td>Is enabled</td>
-                  <td id="mqttEnableTable"></td>
-                </tr>
-                <tr>
-                  <td>Is connected</td>
-                  <td id="mqttConnectedTable"></td>
-                </tr>
+              </thead>
+              <tbody>
               </tbody>
             </table>
             <form id="mqttSettingsForm" >
               <div class="form-group">
                 <input id="mqtthost" type="text" class="form-control top-buffer"  placeholder="New Mqtt hostname">
                 <button id="mqttsub" action="#" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
+                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer" data-dismiss="modal">Close</button>
               </div>
             </form>
           </div>

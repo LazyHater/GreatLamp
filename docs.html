@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+  <style>
+  body {
+    background: #000;
+  }
+  .list-group-item {
+    background: #444;
+    color: #ff0;
+  }
+  .list-group-item.active {
+    background-color: #ffc107;
+    border-color: #aed248;
+    color: #fff;
+  }
+
+  .jumbotron {
+    margin-top:20px;
+    background-color: #222222;
+    border-color: #aed248;
+    color: #ff0;
+  }
+  </style>
+  <link rel="icon" type="image/png" href="https://image.ibb.co/fxD5An/favicon2.png">
+
+  <title>Docs</title>
+</head>
+
+<body>
+  <main class="container-fluid">
+    <div class="jumbotron">
+      <h1>REST API</h1><br>
+      <div class="row">
+        <div class="col-4">
+          <div class="list-group" id="list-tab-api" role="tablist">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-/" role="tab" aria-controls="home">/</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-/lamp" role="tab" aria-controls="profile">/lamp</a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-/lamp/set" role="tab" aria-controls="messages">/lamp/set</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-/lamp/toggle" role="tab" aria-controls="settings">/lamp/toggle</a>
+            <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="#list-/mqtt" role="tab" aria-controls="home">/mqtt</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-/wifi" role="tab" aria-controls="profile">/wifi</a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-/restart" role="tab" aria-controls="messages">/restart</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-/docs" role="tab" aria-controls="settings">/docs</a>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="tab-content" id="nav-tabContent-api">
+            <div class="tab-pane fade show active" id="list-/" role="tabpanel" aria-labelledby="list-home-list">displays lamp homepage</div>
+            <div class="tab-pane fade" id="list-/lamp" role="tabpanel" aria-labelledby="list-profile-list">returns json object with status and level property, where level is current lamp level</div>
+            <div class="tab-pane fade" id="list-/lamp/set" role="tabpanel" aria-labelledby="list-messages-list">when arg "level" provided, sets lamp to desired level, level has to be integer with value <0, 3></div>
+            <div class="tab-pane fade" id="list-/lamp/toggle" role="tabpanel" aria-labelledby="list-settings-list">levels up lamp, when level excedes 3 then cycles to 0</div>
+            <div class="tab-pane fade" id="list-/mqtt" role="tabpanel" aria-labelledby="list-home-list">when arg "mqtt_host" provided, sets mqtt hostname. Hostname has to be no longer than 64 characters. If hostname is set to empty string then mqtt funcionality is disabled. All changes to mqtthost are applied after reboot<br>
+              Returns json object with keys:<br>
+              "mqtt_host" - currently used mqtt hostname<br>
+              "mqtt_enabled" - if this is set to "no" then lamp wouldn't try to connect to mqtt broker <br>
+              "mqtt_connected" - returns "yes" if is connected to mqtt broker</div>
+              <div class="tab-pane fade" id="list-/wifi" role="tabpanel" aria-labelledby="list-profile-list">when args "ssid" and "password" are provided, sets it. SSID and password have to be no longer than 64 characters. If SSID is set to empty string then on next boot lamp will start in AP_MODE.  All changes to wifi settings are applied after reboot. Returns JSON object with wifi settings.</div>
+              <div class="tab-pane fade" id="list-/restart" role="tabpanel" aria-labelledby="list-messages-list">restarts lamp</div>
+              <div class="tab-pane fade" id="list-/docs" role="tabpanel" aria-labelledby="list-settings-list">this page</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="jumbotron">
+        <h1>MQTT topics</h1><br>
+        <div class="row">
+          <div class="col-4">
+            <div class="list-group" id="list-tab-mqtt" role="tablist">
+              <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">home/xdlamp/set</a>
+              <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">home/xdlamp/toggle</a>
+            </div>
+          </div>
+          <div class="col-8">
+            <div class="tab-content" id="nav-tabContent-mqtt">
+              <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">sets lamp to desired level, in payload should be number between 0 and 3</div>
+              <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">same behavior as in rest api "/lamp/toggle", payload is ignored</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer" onclick="location.href='/'">Return</button>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>

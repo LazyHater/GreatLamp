@@ -1,6 +1,12 @@
 #include "MqttHandler.h"
 
 void MqttHandler::callback(char* topic, byte* payload, unsigned int length) {
+  if (strcmp(topic, "home/xdlamp/toggle") == 0) {
+    lamp.toggle();
+    return;
+  }
+
+  // assume topic "home/xdlamp/set"
   if (length < 1) return;
 
   switch ((char)payload[0]) {
@@ -28,6 +34,7 @@ void MqttHandler::reconnect() {
   if (millis() - reconnectTime > 5000) {
     if (client.connect("xD-Lamp")) {
       client.subscribe("home/xdlamp/set");
+      client.subscribe("home/xdlamp/toggle");
     }
     reconnectTime = millis();
   }
