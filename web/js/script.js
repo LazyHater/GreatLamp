@@ -20,8 +20,6 @@ var imgUrls = [
   "https://image.ibb.co/kAZ1i7/wait.png", // wait
 ];
 
-
-
 $( document ).ready(function() {
   $("#alert").hide();
   $("#light").attr('src', imgUrls[5]);
@@ -95,7 +93,7 @@ function successAlert(msg) {
 
 function createTable(id, data) {
   $("#" + id + " tbody tr").remove();
-  for (let key in data) {
+  for (key in data) {
     // check if the property/key is defined in the object itself, not in parent
     if (data.hasOwnProperty(key)) {
       if (key == "status") continue;
