@@ -1,0 +1,20 @@
+body {
+    background: #000;
+    font: 400 17px/0.8 "Comic Sans MS", cursive, sans-serif;
+  }
+  .list-group-item {
+    background: #444;
+    color: #ff0;
+  }
+  .list-group-item.active {
+    background-color: #ffc107;
+    border-color: #aed248;
+    color: #fff;
+  }
+
+  .jumbotron {
+    margin-top:20px;
+    background-color: #222222;
+    border-color: #aed248;
+    color: #ff0;
+  }

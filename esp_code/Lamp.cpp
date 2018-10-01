@@ -14,25 +14,29 @@ Lamp::Lamp(const int read_pin, const int write_pin) : read_pin(read_pin), write_
 }
 
 int Lamp::readLevel() {
-	const int samples = 1000;
-	int cnt = 0;
-	for (int i = 0; i < samples; i++) {
-		cnt += digitalRead(read_pin);
-	}
+    static int tmp = 0;
+	tmp += 1;
+	tmp %= 4;
+	return tmp;
+	// const int samples = 1000;
+	// int cnt = 0;
+	// for (int i = 0; i < samples; i++) {
+	// 	cnt += digitalRead(read_pin);
+	// }
 
-	int levels[] = {int(samples * 0.0f), int(samples * 0.1f), int(samples * 0.4f), int(samples * 1.0f)};
-	int min_dist = samples * 2;
-	int min_idx = -1;
+	// int levels[] = {int(samples * 0.0f), int(samples * 0.1f), int(samples * 0.4f), int(samples * 1.0f)};
+	// int min_dist = samples * 2;
+	// int min_idx = -1;
 
-	for (int i = 0; i < (sizeof(levels) / sizeof(int)); i++) {
-		int dist = abs(levels[i] - cnt);
-		if (dist < min_dist) {
-			min_dist = dist;
-			min_idx = i;
-		}
-	}
+	// for (int i = 0; i < (sizeof(levels) / sizeof(int)); i++) {
+	// 	int dist = abs(levels[i] - cnt);
+	// 	if (dist < min_dist) {
+	// 		min_dist = dist;
+	// 		min_idx = i;
+	// 	}
+	// }
 
-	return min_idx;
+	// return min_idx;
 }
 
 void Lamp::toggle() {

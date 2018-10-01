@@ -25,6 +25,8 @@ public:
 
   inline bool isEnabled() { return enabled; }
 
+  inline bool getState() { return client.state(); }
+
   static void callback(char* topic, byte* payload, unsigned int length);
 
 private:

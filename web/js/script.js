@@ -1,26 +1,32 @@
-/*
-let imgUrls = [
-"img/lv0.png", // lv0
-"img/lv1.png", // lv1
-"img/lv2.png", // lv2
-"img/lv3.png", // lv3
-"img/error.png", // error
-"img/wait.png", // wait
-];
-*/
-//var baseUrl = "http://192.168.1.9/";
-var baseUrl = "/";
 
-var imgUrls = [
-  "https://image.ibb.co/kWdiwS/lv0.png", // lv0
-  "https://image.ibb.co/gmuOwS/lv1.png", // lv1
-  "https://image.ibb.co/c3vkAn/lv2.png", // lv2
-  "https://image.ibb.co/mSxMi7/lv3.png", // lv3
-  "https://image.ibb.co/duXyVn/error.png", // error
-  "https://image.ibb.co/kAZ1i7/wait.png", // wait
+// var imgUrls = [
+// "../img/lv0.png", // lv0
+// "../img/lv1.png", // lv1
+// "../img/lv2.png", // lv2
+// "../img/lv3.png", // lv3
+// "../img/error.png", // error
+// "../img/wait.png", // wait
+// ];
+
+var baseUrl = "http://192.168.1.4/";
+// let baseUrl = "/";
+
+let imgUrls = [
+  "https://image.ibb.co/iQuqUK/lv0.png", // lv0
+  "https://image.ibb.co/dQkawz/lv1.png", // lv1
+  "https://image.ibb.co/hYHc9K/lv2.png", // lv2
+  "https://image.ibb.co/ngyjpK/lv3.png", // lv3
+  "https://image.ibb.co/bC2c9K/error.png", // error
+  "https://image.ibb.co/cJTjpK/wait.png", // wait
 ];
 
 $( document ).ready(function() {
+
+  $("#settings").click(function(){
+    $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+    return false;
+  });
+
   $("#alert").hide();
   $("#light").attr('src', imgUrls[5]);
 
@@ -56,7 +62,7 @@ $( document ).ready(function() {
     toggleLamp();
   });
 
-  $("#restart").click(function(){
+  $("#restartbtn").click(function(){
     restartLamp();
   });
 
@@ -71,6 +77,8 @@ $( document ).ready(function() {
   $("#docsbtn").click(function(){
     location.href='/docs';
   });
+
+
 
   $.ajax({
     url: baseUrl + "lamp",
@@ -210,6 +218,10 @@ function changeImageLevel(lv) {
 }
 
 function onError( obj, type, except ) {
-  errorAlert(obj.responseJSON.error);
+  if (obj.hasOwnProperty('error')) {
+    errorAlert(obj.responseJSON.error);
+  } else {
+    console.log(obj);
+  }
   changeImageLevel(4);
 }

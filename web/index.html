@@ -8,10 +8,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="icon" type="image/png" href="https://image.ibb.co/dzHoGz/favicon2.png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
   <link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
-  <link href="css/style.css" rel="stylesheet" type='text/css'>
-  <link rel="icon" type="image/png" href="https://image.ibb.co/fxD5An/favicon2.png">
+  <link href="css/index.css" rel="stylesheet" type="text/css">
 
   <title>Let's make lampka xD again</title>
 </head>
@@ -21,7 +22,7 @@
     <div id="alert" class="alert  top-buffer" role="alert">
     </div>
     <div class="col-12 text-center">
-      <img id="light" src="img/wait.png" alt="light level image" class="img-responsive">
+      <img id="light" src="https://image.ibb.co/cJTjpK/wait.png" alt="light level image" class="img-responsive">
     </div>
     <div class="row">
       <div class="col text-center top-buffer">
@@ -29,12 +30,18 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col text-center">
-        <button id="lv0" class="raise">xd</button>
-        <button id="lv1" class="raise">xD</button>
-        <button id="lv2" class="raise">XD</button>
-        <button id="lv3" class="raise">XDDD</button>
+    <div class="row justify-content-center">
+      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+        <button id="lv0" class="xd-button raise">xd</button>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+        <button id="lv1" class="xd-button raise">xD</button>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+        <button id="lv2" class="xd-button raise">XD</button>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+        <button id="lv3" class="xd-button raise">XDDD</button>
       </div>
     </div>
 
@@ -44,25 +51,28 @@
       </div>
     </div>
 
-    <row id="settings" class="row top-buffer justify-content-center text-center collapse">
-      <button id="wifibtn" type="button" class="btn btn-warning btn-lg">
-        Wifi Settings
-      </button>
-      <button id="mqttbtn" type="button" class="btn btn-warning btn-lg">
-        Mqtt Settings
-      </button>
-      <button id="docsbtn" type="button" class="btn btn-warning btn-lg">
-        Docs
-      </button>
-      <button id="restart" class="btn btn-danger btn-lg">
-        Restart
-      </button>
-    </row>
-    <!-- Button trigger modal -->
+    <div id="settings" class="row top-buffer justify-content-center text-center collapse">
+
+        <div class="row justify-content-center">
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+                <button id="wifibtn" type="button" class="xd-button btn btn-warning btn-lg">Wifi Settings</button>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+                <button id="mqttbtn" type="button" class="xd-button btn btn-warning btn-lg">Mqtt Settings</button>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+                <button id="docsbtn" type="button" class="xd-button btn btn-warning btn-lg">Docs</button>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+                <button id="restartbtn" type="button" class="xd-button btn btn-danger btn-lg">Restart</button>
+            </div>
+          </div>
+
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="wifiModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document" >
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-body modal-style">
             <h5 class="modal-title">Wifi settings</h5>
@@ -79,11 +89,12 @@
             <form id="wifiSettingsForm">
               <div class="form-group top-buffer">
                 <div class="form-group">
-                  <input id="ssid" type="text" class="form-control"  placeholder="New SSID">
+                  <input id="ssid" type="text" class="form-control" placeholder="New SSID">
                 </div>
                 <input id="password" type="text" class="form-control" placeholder="New Password">
                 <button id="wifisub" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
-                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer"
+                  data-dismiss="modal">Close</button>
               </div>
             </form>
           </div>
@@ -94,7 +105,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="mqttModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document" >
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-body modal-style">
             <h5 class="modal-title">Mqtt settings</h5>
@@ -108,11 +119,12 @@
               <tbody>
               </tbody>
             </table>
-            <form id="mqttSettingsForm" >
+            <form id="mqttSettingsForm">
               <div class="form-group">
-                <input id="mqtthost" type="text" class="form-control top-buffer"  placeholder="New Mqtt hostname">
+                <input id="mqtthost" type="text" class="form-control top-buffer" placeholder="New Mqtt hostname">
                 <button id="mqttsub" action="#" type="submit" class="btn btn-primary btn-lg btn-block btn-warning no-margin top-buffer">Submit</button>
-                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary btn-lg btn-block btn-warning no-margin top-buffer"
+                  data-dismiss="modal">Close</button>
               </div>
             </form>
           </div>
@@ -123,10 +135,11 @@
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
   <script src="js/script.js"></script>
-  <script src="js/script2.js"></script>
 </body>
 
 </html>

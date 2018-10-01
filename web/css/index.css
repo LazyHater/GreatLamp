@@ -32,6 +32,8 @@ h5 {
 body {
   color: #fff;
   background: #000;
+  font: 400 17px/0.8 "Comic Sans MS", cursive, sans-serif;
+  padding-right: 20px;
 }
 .top-buffer { margin-top:20px; }
 button {
@@ -40,12 +42,11 @@ button {
   transition: 0.25s;
   background: none;
   border: 2px solid;
-  font: inherit;
   line-height: 1;
   margin: 0.5em;
   padding: 1em 2em;
 
-  font: 400 17px/0.8 'Cookie', Helvetica, sans-serif;
+  
   color: #ffc107;
   text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
 }
@@ -56,7 +57,10 @@ button:hover, button:focus {
 }
 
 h1 {
-    font: 400 50px/0.8 'Cookie', Helvetica, sans-serif;
     color: #ffc107;
     text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+}
+
+.xd-button {
+  width: 100%;
 }

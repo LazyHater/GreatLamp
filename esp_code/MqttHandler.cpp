@@ -32,9 +32,20 @@ void MqttHandler::reconnect() {
   // Attempt to connect
   static long reconnectTime = 0;
   if (millis() - reconnectTime > 5000) {
-    if (client.connect("xD-Lamp")) {
+    Serial.print("Reconnecting as ");
+    String clientId = "xD-Lamp-";
+    clientId += String(random(0xffff), HEX);
+    Serial.print(clientId);
+    Serial.print(" ");
+  
+    Serial.println(eepromHandler.getMqttHost());
+    if (client.connect(clientId.c_str())) {
+    Serial.println("connected");
       client.subscribe("home/xdlamp/set");
       client.subscribe("home/xdlamp/toggle");
+    } else {
+    Serial.println("failed");
+
     }
     reconnectTime = millis();
   }
@@ -46,19 +57,19 @@ void MqttHandler::handle() {
   if (!client.connected()) {
     reconnect();
   } else {
-    client.loop();
   }
+    client.loop();
 }
 
 void MqttHandler::init() {
-  eepromHandler.init();
-  eepromHandler.readMqttHost();
-  eepromHandler.end();
+ eepromHandler.init();
+ eepromHandler.readMqttHost();
+ eepromHandler.end();
 
-  if (eepromHandler.getMqttHost().length() == 0) {
-    enabled = false;
-    return;
-  }
+ if (eepromHandler.getMqttHost().length() == 0) {
+   enabled = false;
+   return;
+ }
 
   strcpy(mqtt_host, eepromHandler.getMqttHost().c_str());
 

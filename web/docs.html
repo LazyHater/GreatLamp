@@ -4,30 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <link rel="icon" type="image/png" href="https://image.ibb.co/fxD5An/favicon2.png">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
-  <style>
-  body {
-    background: #000;
-  }
-  .list-group-item {
-    background: #444;
-    color: #ff0;
-  }
-  .list-group-item.active {
-    background-color: #ffc107;
-    border-color: #aed248;
-    color: #fff;
-  }
-
-  .jumbotron {
-    margin-top:20px;
-    background-color: #222222;
-    border-color: #aed248;
-    color: #ff0;
-  }
-  </style>
-  <link rel="icon" type="image/png" href="https://image.ibb.co/fxD5An/favicon2.png">
+  <link href="css/docs.css" rel="stylesheet" type="text/css">
 
   <title>Docs</title>
 </head>
@@ -53,7 +33,7 @@
           <div class="tab-content" id="nav-tabContent-api">
             <div class="tab-pane fade show active" id="list-/" role="tabpanel" aria-labelledby="list-home-list">displays lamp homepage</div>
             <div class="tab-pane fade" id="list-/lamp" role="tabpanel" aria-labelledby="list-profile-list">returns json object with status and level property, where level is current lamp level</div>
-            <div class="tab-pane fade" id="list-/lamp/set" role="tabpanel" aria-labelledby="list-messages-list">when arg "level" provided, sets lamp to desired level, level has to be integer with value <0, 3></div>
+            <div class="tab-pane fade" id="list-/lamp/set" role="tabpanel" aria-labelledby="list-messages-list">when arg "level" provided, sets lamp to desired level, level has to be integer with value &lt;0, 3&gt;</div>
             <div class="tab-pane fade" id="list-/lamp/toggle" role="tabpanel" aria-labelledby="list-settings-list">levels up lamp, when level excedes 3 then cycles to 0</div>
             <div class="tab-pane fade" id="list-/mqtt" role="tabpanel" aria-labelledby="list-home-list">when arg "mqtt_host" provided, sets mqtt hostname. Hostname has to be no longer than 64 characters. If hostname is set to empty string then mqtt funcionality is disabled. All changes to mqtthost are applied after reboot<br>
               Returns json object with keys:<br>
