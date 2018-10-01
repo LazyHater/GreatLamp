@@ -12,7 +12,7 @@ script_tag_replace = r"<script\s*src=\"{script_name}\"><\/script>"
 link_tag = re.compile(r"<link href=\"([\w.\/]+)\" rel=\"stylesheet\" type=\"text/css\">")
 link_tag_replace = r"<link href=\"{link_name}\" rel=\"stylesheet\" type=\"text/css\">"
 
-c_file_template =  """
+html_file_template =  """
 // Html.h
 
 #ifndef HTML_H
@@ -22,7 +22,21 @@ c_file_template =  """
 
 #endif
 """
-c_line_template =  "const char {}[] PROGMEM = {};"
+
+deviceinfo_file_template =  """
+// Deviceinfo.h
+
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
+
+{}
+const int DEVICEINFO_PAYLOAD_SIZE = {};
+
+#endif
+"""
+
+h_line_template =  "const char {}[] PROGMEM = {};"
+device_line_template =  "const char {}[] PROGMEM = {};"
 mimify_command = "html-minifier --minify-css --minify-js --remove-comments --conservative-collapse --collapse-whitespace  --remove-tag-whitespace --remove-attribute-quotes  {}"
 # mimify_command = "html-minifier --minify-css --minify-js --remove-comments   {}"
 #regex = r"<script\s*src=\"([\w.\/]+)\"><\/script>"
@@ -125,12 +139,11 @@ for filename in os.listdir(html_min_dir):
         logging.info("Processing %s", path)
         process_html_file(path)
 
-def escape_to_c_str(path):
+def escape_to_c_str(path, fname):
     logging.info("Processing %s", path)
-    fname = path.split('/')[-1].split('.')[0].upper()+"_HTML"
     with open(path, 'r') as f:
         content = f.read()
-    return c_line_template.format(fname, json.dumps(content))
+    return (h_line_template.format(fname, json.dumps(content)), len(content))
 
 logging.info("Generating Html.h file...")
 
@@ -139,12 +152,17 @@ files = [ os.path.join(build_dir, fname) for fname in os.listdir(build_dir) if f
 html_file_src = os.path.join(build_dir, "Html.h")
 html_file_dst = os.path.join(build_dir, "../../esp_code/Html.h")
 with open(html_file_src, 'w') as f:
-    f.write(c_file_template.format("\n".join(map(escape_to_c_str, files))))
+    f.write(html_file_template.format("\n".join( [escape_to_c_str(file, file.split('/')[-1].split('.')[0].upper()+"_HTML")[0] for file in files])))
 
 logging.info("Copying Html.h to esp dir...")
 shutil.copyfile(html_file_src, html_file_dst)
 
 logging.info("Done")
    
+
+with open("../esp_code/Deviceinfo.h", 'w') as fout:
+    content, size = escape_to_c_str("deviceinfo.json", "DEVICEINFO_PAYLOAD")
+    devinfo = deviceinfo_file_template.format(content, size).replace('char', 'uint8_t')
+    fout.write(devinfo)
 
 

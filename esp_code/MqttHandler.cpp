@@ -1,52 +1,73 @@
 #include "MqttHandler.h"
 
+extern WiFiClient espClient;
+PubSubClient mqttClient(espClient);
+
+bool MqttHandler::isConnected() { return mqttClient.connected(); }
+
+bool MqttHandler::isEnabled() { return enabled; }
+
+bool MqttHandler::getState() { return mqttClient.state(); }
+
 void MqttHandler::callback(char* topic, byte* payload, unsigned int length) {
-  if (strcmp(topic, "home/xdlamp/toggle") == 0) {
+  if (strcmp(topic, "/inbox/xdlamp/toggle") == 0) {
     lamp.toggle();
+    lamp.handle(true);
     return;
   }
 
-  // assume topic "home/xdlamp/set"
-  if (length < 1) return;
-
-  switch ((char)payload[0]) {
-    case '0':
-    lamp.setLevel(0);
-    break;
-
-    case '1':
-    lamp.setLevel(1);
-    break;
-
-    case '2':
-    lamp.setLevel(2);
-    break;
-
-    case '3':
-    lamp.setLevel(3);
-    break;
+  if (strcmp(topic, "/inbox/xdlamp/deviceInfo") == 0) {
+    mqttClient.publish_P("/outbox/xdlamp/deviceInfo", DEVICEINFO_PAYLOAD, DEVICEINFO_PAYLOAD_SIZE, true);
+    return;
   }
+
+  if (strcmp(topic, "/inbox/xdlamp/set") == 0) {
+    for (int i = 0; i < length; i++) {
+      byte level = payload[i] - '0';
+      if (level >= 0 && level <= 3 ) {
+        lamp.setLevel(level);
+        lamp.handle(true);
+        break;
+      }
+    }
+    return;
+  }
+}
+
+void MqttHandler::updateLevel(int lv) {
+  if (!mqttClient.connected()) {
+    return;
+  }
+
+  char buff[64];
+  snprintf(buff, 64, "{\"value\": %i}", lv);
+  mqttClient.publish("/outbox/xdlamp/set", buff);
+}
+
+
+void MqttHandler::updateLevel2(int lv) {
+  if (!mqttClient.connected()) {
+    return;
+  }
+
+  char buff[64];
+  snprintf(buff, 64, "{\"value\": %i}", lv);
+  mqttClient.publish("/outbox/xdlamp/cnt", buff);
 }
 
 void MqttHandler::reconnect() {
   // Attempt to connect
-  static long reconnectTime = 0;
+  static unsigned long reconnectTime = 0;
   if (millis() - reconnectTime > 5000) {
-    Serial.print("Reconnecting as ");
     String clientId = "xD-Lamp-";
     clientId += String(random(0xffff), HEX);
-    Serial.print(clientId);
-    Serial.print(" ");
-  
-    Serial.println(eepromHandler.getMqttHost());
-    if (client.connect(clientId.c_str())) {
-    Serial.println("connected");
-      client.subscribe("home/xdlamp/set");
-      client.subscribe("home/xdlamp/toggle");
-    } else {
-    Serial.println("failed");
 
-    }
+    if (mqttClient.connect(clientId.c_str(), "/outbox/xdlamp/lwt", 1, false, "xd")) {
+      mqttClient.subscribe("/inbox/xdlamp/set");
+      mqttClient.subscribe("/inbox/xdlamp/toggle");
+      mqttClient.subscribe("/inbox/xdlamp/deviceInfo");
+      mqttClient.publish_P("/outbox/xdlamp/deviceInfo", DEVICEINFO_PAYLOAD, DEVICEINFO_PAYLOAD_SIZE, true);
+    } 
     reconnectTime = millis();
   }
 }
@@ -54,11 +75,11 @@ void MqttHandler::reconnect() {
 void MqttHandler::handle() {
   if (!enabled) return;
 
-  if (!client.connected()) {
+  if (!mqttClient.connected()) {
     reconnect();
   } else {
   }
-    client.loop();
+    mqttClient.loop();
 }
 
 void MqttHandler::init() {
@@ -73,6 +94,6 @@ void MqttHandler::init() {
 
   strcpy(mqtt_host, eepromHandler.getMqttHost().c_str());
 
-  client.setServer(mqtt_host, 1883);
-  client.setCallback(MqttHandler::callback);
+  mqttClient.setServer(mqtt_host, 1883);
+  mqttClient.setCallback(MqttHandler::callback);
 }

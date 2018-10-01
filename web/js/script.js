@@ -8,8 +8,8 @@
 // "../img/wait.png", // wait
 // ];
 
-var baseUrl = "http://192.168.1.4/";
-// let baseUrl = "/";
+// var baseUrl = "http://192.168.1.4/";
+let baseUrl = "/";
 
 let imgUrls = [
   "https://image.ibb.co/iQuqUK/lv0.png", // lv0

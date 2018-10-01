@@ -7,13 +7,13 @@
 #include <PubSubClient.h>
 #include "EepromHandler.h"
 #include "Lamp.h"
-
+#include "Deviceinfo.h"
 extern Lamp lamp;
 
 class MqttHandler {
 
 public:
-  MqttHandler(WiFiClient& espClient) : client(espClient) {}
+  // MqttHandler(WiFiClient& espClient) : client(espClient) {}
 
   void init();
 
@@ -21,19 +21,20 @@ public:
 
   void handle();
 
-  inline bool isConnected() { return client.connected(); }
+  bool isConnected();
 
-  inline bool isEnabled() { return enabled; }
+  bool isEnabled();
 
-  inline bool getState() { return client.state(); }
+  bool getState(); 
+
+  static void updateLevel(int lv);
+  static void updateLevel2(int lv);
 
   static void callback(char* topic, byte* payload, unsigned int length);
 
 private:
   char mqtt_host[65];
-  PubSubClient client;
   bool enabled = true;
-
 };
 
 #endif // MQTT_HANDLER_H

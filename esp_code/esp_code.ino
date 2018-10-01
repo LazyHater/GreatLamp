@@ -13,6 +13,9 @@ $ wget http://esp8266webform.local/ledon
 $ wget http://esp8266webform.local/ledoff
 */
 
+
+// #define MQTT_MAX_PACKET_SIZE 512
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -29,7 +32,8 @@ extern "C" {
 }
 ESP8266WebServer server(80);
 WiFiClient espClient;
-MqttHandler mqtt(espClient);
+// MqttHandler mqtt(espClient);
+MqttHandler mqtt;
 
 const int LAMP_WRITE_PIN = 2;
 const int LAMP_READ_PIN = 3;
@@ -224,28 +228,22 @@ void beginAP() {
 void setup(void) {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   
-  Serial.begin(115200);
-    Serial.println("Start ");
   system_update_cpu_freq(SYS_CPU_160MHZ); 
   
   delay(2000);
   button_pressed_on_boot = !digitalRead(BUTTON_PIN);
-  Serial.println(button_pressed_on_boot);
-  button_pressed_on_boot = false;
+  // button_pressed_on_boot = false;
   eepromHandler.init();
   eepromHandler.readWiFiParameters();
   eepromHandler.readMqttHost();
   eepromHandler.end();
 
   if (button_pressed_on_boot || (eepromHandler.getSsid().length() == 0)) {
-    Serial.println("Begin ap");
     beginAP();
   } else {
-    Serial.println("Begin st");
     beginST();
   }
   
-    Serial.println("Connected");
   randomSeed(micros());
 
   MDNS.begin("xd-lamp");
@@ -265,10 +263,12 @@ void setup(void) {
   server.begin();
 
   mqtt.init();
+
+  lamp.setCallback(MqttHandler::updateLevel);
 }
 
 void loop(void) {
   server.handleClient();
   mqtt.handle();
-  
+  lamp.handle();
 }
