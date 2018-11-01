@@ -13,7 +13,6 @@ $ wget http://esp8266webform.local/ledon
 $ wget http://esp8266webform.local/ledoff
 */
 
-
 // #define MQTT_MAX_PACKET_SIZE 512
 
 #include <ESP8266WiFi.h>
@@ -22,45 +21,49 @@ $ wget http://esp8266webform.local/ledoff
 #include <ESP8266mDNS.h>
 #include "FS.h"
 
+#include "Parameters.h"
+#include "Debug.h"
 #include "Lamp.h"
 #include "EepromHandler.h"
 #include "MqttHandler.h"
 #include "Utils.h"
 #include "Html.h"
-extern "C" {
+extern "C"
+{
 #include "user_interface.h"
 }
-ESP8266WebServer server(80);
+ESP8266WebServer server(HTTP_SERVER_PORT);
 WiFiClient espClient;
 // MqttHandler mqtt(espClient);
 MqttHandler mqtt;
 
-const int LAMP_WRITE_PIN = 2;
-const int LAMP_READ_PIN = 3;
-const int BUTTON_PIN = 1;
 bool button_pressed_on_boot = false;
 
 Lamp lamp(LAMP_READ_PIN, LAMP_WRITE_PIN);
 
 String ok_msg = "{\"status\": \"ok\"}";
 
-void returnHomepage() {
+void returnHomepage()
+{
   server.sendHeader("Connection", "close");
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/html", INDEX_HTML);
 }
 
-void handleRoot() {
+void handleRoot()
+{
   returnHomepage();
 }
 
-void handleDoc() {
+void handleDoc()
+{
   server.sendHeader("Connection", "close");
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/html", DOCS_HTML);
 }
 
-void handleNotFound() {
+void handleNotFound()
+{
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -69,16 +72,20 @@ void handleNotFound() {
   message += "\nArguments: ";
   message += server.args();
   message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++) {
+  for (uint8_t i = 0; i < server.args(); i++)
+  {
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/plain", message);
 }
 
-void handleLampSet() {
-  if (server.hasArg("level")) {
+void handleLampSet()
+{
+  if (server.hasArg("level"))
+  {
     String level_s = server.arg("level");
-    if (!isValidNumber(level_s)) {
+    if (!isValidNumber(level_s))
+    {
       String json = "{";
       json += addJsonKeyValue("status", "error") + ",";
       json += addJsonKeyValue("error", "LEVEL VALUE IS NOT A VALID INTEGER:" + level_s);
@@ -89,7 +96,8 @@ void handleLampSet() {
 
     int level = server.arg("level").toInt();
 
-    if (level < 0 || level > 3) {
+    if (level < 0 || level > 3)
+    {
       String json = "{";
       json += addJsonKeyValue("status", "error") + ",";
       json += addJsonKeyValue("error", "Level value out of range <0, 3>:" + String(level));
@@ -108,7 +116,8 @@ void handleLampSet() {
   returnJSON(json);
 }
 
-void handleLampToggle() {
+void handleLampToggle()
+{
   lamp.toggle();
 
   String json = "{";
@@ -118,7 +127,8 @@ void handleLampToggle() {
   returnJSON(json);
 }
 
-void handleLamp() {
+void handleLamp()
+{
   String json = "{";
   json += addJsonKeyValue("status", "ok") + ",";
   json += addJsonKeyValue("level", lamp.readLevel());
@@ -126,26 +136,29 @@ void handleLamp() {
   returnJSON(json);
 }
 
-void handleRestart() {
+void handleRestart()
+{
   returnJSON(ok_msg);
 
   ESP.restart();
 }
 
-
-void handleWifi() {
+void handleWifi()
+{
   bool success = true;
 
   eepromHandler.init();
 
-  if (server.hasArg("ssid") && server.hasArg("password")) {
+  if (server.hasArg("ssid") && server.hasArg("password"))
+  {
     success = eepromHandler.writeWifiParameters(server.arg("ssid"), server.arg("password"));
   }
 
   eepromHandler.readWiFiParameters();
   eepromHandler.end();
 
-  if (success) {
+  if (success)
+  {
     String json = "{";
     json += addJsonKeyValue("status", "ok") + ",";
     json += addJsonKeyValue("ssid", eepromHandler.getSsid()) + ",";
@@ -166,7 +179,9 @@ void handleWifi() {
 
     json += "}";
     returnJSON(json);
-  } else {
+  }
+  else
+  {
     String json = "{";
     json += addJsonKeyValue("status", "error") + ",";
     json += addJsonKeyValue("error", "Failed to set ssid and password for ssid:" + server.arg("ssid") + " password:" + server.arg("password"));
@@ -175,27 +190,32 @@ void handleWifi() {
   }
 }
 
-void handleMqtt() {
+void handleMqtt()
+{
   bool success = true;
   eepromHandler.init();
 
-  if (server.hasArg("mqtt_host")) {
+  if (server.hasArg("mqtt_host"))
+  {
     success = eepromHandler.writeMqttHost(server.arg("mqtt_host"));
   }
 
   eepromHandler.readMqttHost();
   eepromHandler.end();
 
-  if (success) {
+  if (success)
+  {
     String json = "{";
     json += addJsonKeyValue("status", "ok") + ",";
     json += addJsonKeyValue("mqtt_host", eepromHandler.getMqttHost()) + ",";
-    json += addJsonKeyValue("mqtt_enabled",  mqtt.isEnabled() ? "yes" : "no") + ",";
+    json += addJsonKeyValue("mqtt_enabled", mqtt.isEnabled() ? "yes" : "no") + ",";
     json += addJsonKeyValue("mqtt_state", MQTT_STATUSES[mqtt.getState() + 4]);
     json += "}";
 
     returnJSON(json);
-  } else {
+  }
+  else
+  {
     String json = "{";
     json += addJsonKeyValue("status", "error") + ",";
     json += addJsonKeyValue("error", "Failed to set " + server.arg("mqtt_host") + " as mqtt host.");
@@ -204,33 +224,36 @@ void handleMqtt() {
   }
 }
 
-void beginST() {
+void beginST()
+{
   WiFi.disconnect();
   delay(100);
   WiFi.mode(WIFI_STA);
-  wifi_station_set_hostname("xD-Lamp");
+  wifi_station_set_hostname(HOSTNAME);
   WiFi.begin(eepromHandler.getSsid().c_str(), eepromHandler.getPassword().c_str());
 
-
   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
   }
 }
 
-void beginAP() {
+void beginAP()
+{
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(100);
-  WiFi.softAP("xd-lamp");
+  WiFi.softAP(SOFT_AP_SSID);
 }
 
-void setup(void) {
+void setup(void)
+{
   pinMode(BUTTON_PIN, INPUT_PULLUP);
-  
-  system_update_cpu_freq(SYS_CPU_160MHZ); 
-  
-  delay(2000);
+
+  system_update_cpu_freq(SYS_CPU_160MHZ);
+
+  delay(BOOT_DELAY);
   button_pressed_on_boot = !digitalRead(BUTTON_PIN);
   // button_pressed_on_boot = false;
   eepromHandler.init();
@@ -238,25 +261,28 @@ void setup(void) {
   eepromHandler.readMqttHost();
   eepromHandler.end();
 
-  if (button_pressed_on_boot || (eepromHandler.getSsid().length() == 0)) {
+  if (button_pressed_on_boot || (eepromHandler.getSsid().length() == 0))
+  {
     beginAP();
-  } else {
+  }
+  else
+  {
     beginST();
   }
-  
+
   randomSeed(micros());
 
-  MDNS.begin("xd-lamp");
+  MDNS.begin(MDNS_NAME);
   MDNS.addService("http", "tcp", 80); // Announce esp tcp service on port 80
 
   server.on("/", handleRoot);
-  server.on("/lamp", handleLamp);
-  server.on("/lamp/set", handleLampSet);
-  server.on("/lamp/toggle", handleLampToggle);
-  server.on("/mqtt", handleMqtt);
-  server.on("/wifi", handleWifi);
-  server.on("/restart", handleRestart);
   server.on("/docs", handleDoc);
+  server.on("/api/lamp", handleLamp);
+  server.on("/api/lamp/set", handleLampSet);
+  server.on("/api/lamp/toggle", handleLampToggle);
+  server.on("/api/mqtt", handleMqtt);
+  server.on("/api/wifi", handleWifi);
+  server.on("/api/restart", handleRestart);
 
   server.onNotFound(handleNotFound);
 
@@ -267,7 +293,8 @@ void setup(void) {
   lamp.setCallback(MqttHandler::updateLevel);
 }
 
-void loop(void) {
+void loop(void)
+{
   server.handleClient();
   mqtt.handle();
   lamp.handle();

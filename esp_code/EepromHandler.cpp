@@ -2,8 +2,10 @@
 
 #include "EepromHandler.h"
 
-bool EepromHandler::clearWifiParameters() {
-	for (int i = 0; i < ( _ssid_space + _password_space ); ++i) {
+bool EepromHandler::clearWifiParameters()
+{
+	for (int i = 0; i < (_ssid_space + _password_space); ++i)
+	{
 		EEPROM.write(i, 0);
 	}
 
@@ -12,8 +14,10 @@ bool EepromHandler::clearWifiParameters() {
 	return true;
 }
 
-bool EepromHandler::clearMqttHost() {
-	for (int i = _ssid_space + _password_space; i < (_ssid_space + _password_space + _mqtt_host_space); ++i) {
+bool EepromHandler::clearMqttHost()
+{
+	for (int i = _ssid_space + _password_space; i < (_ssid_space + _password_space + _mqtt_host_space); ++i)
+	{
 		EEPROM.write(i, 0);
 	}
 
@@ -22,24 +26,29 @@ bool EepromHandler::clearMqttHost() {
 	return true;
 }
 
-bool EepromHandler::writeWifiParameters(String ssid, String password) {
-	if (ssid.length() > _ssid_space) {
+bool EepromHandler::writeWifiParameters(String ssid, String password)
+{
+	if (ssid.length() > _ssid_space)
+	{
 		//Serial.println("Not enough space to store ssid!");
 		return false;
 	}
 
-	if (password.length() > _password_space) {
+	if (password.length() > _password_space)
+	{
 		//Serial.println("Not enough space to store password!");
 		return false;
 	}
 
 	clearWifiParameters();
 
-	for (size_t i = 0; i < ssid.length(); ++i) {
+	for (size_t i = 0; i < ssid.length(); ++i)
+	{
 		EEPROM.write(i, ssid[i]);
 	}
 
-	for (size_t i = 0; i < password.length(); ++i)	{
+	for (size_t i = 0; i < password.length(); ++i)
+	{
 		EEPROM.write(_ssid_space + i, password[i]);
 	}
 
@@ -51,15 +60,18 @@ bool EepromHandler::writeWifiParameters(String ssid, String password) {
 	return success;
 }
 
-bool EepromHandler::writeMqttHost(String mqtt_host) {
-	if (mqtt_host.length() > _mqtt_host_space) {
+bool EepromHandler::writeMqttHost(String mqtt_host)
+{
+	if (mqtt_host.length() > _mqtt_host_space)
+	{
 		//Serial.println("Not enough space to store ssid!");
 		return false;
 	}
 
 	clearMqttHost();
 
-	for (size_t i = 0; i < mqtt_host.length(); ++i) {
+	for (size_t i = 0; i < mqtt_host.length(); ++i)
+	{
 		EEPROM.write(i + _ssid_space + _password_space, mqtt_host[i]);
 	}
 
@@ -71,14 +83,17 @@ bool EepromHandler::writeMqttHost(String mqtt_host) {
 	return success;
 }
 
-bool EepromHandler::readMqttHost() {
+bool EepromHandler::readMqttHost()
+{
 	_mqtt_host = "";
 
 	//Serial.println("Starting eeprom read");
 
-	for (size_t i = _ssid_space + _password_space; i < (_ssid_space + _password_space + _mqtt_host_space); ++i) {
+	for (size_t i = _ssid_space + _password_space; i < (_ssid_space + _password_space + _mqtt_host_space); ++i)
+	{
 		char tmp = char(EEPROM.read(i));
-		if (tmp == 0) break;
+		if (tmp == 0)
+			break;
 		_mqtt_host += tmp;
 	}
 
@@ -89,20 +104,25 @@ bool EepromHandler::readMqttHost() {
 	return true;
 }
 
-bool EepromHandler::readWiFiParameters() {
+bool EepromHandler::readWiFiParameters()
+{
 	_ssid = "";
 	_password = "";
 
 	//Serial.println("Starting eeprom read");
 
-	for (size_t i = 0; i < _ssid_space; ++i) {
+	for (size_t i = 0; i < _ssid_space; ++i)
+	{
 		char tmp = char(EEPROM.read(i));
-		if (tmp == 0) break;
+		if (tmp == 0)
+			break;
 		_ssid += tmp;
 	}
-	for (size_t i = 0; i < _password_space; ++i) {
+	for (size_t i = 0; i < _password_space; ++i)
+	{
 		char tmp = char(EEPROM.read(_ssid_space + i));
-		if (tmp == 0) break;
+		if (tmp == 0)
+			break;
 		_password += tmp;
 	}
 
@@ -113,11 +133,13 @@ bool EepromHandler::readWiFiParameters() {
 	return true;
 }
 
-void EepromHandler::init() {
+void EepromHandler::init()
+{
 	EEPROM.begin(_init_eeprom_size);
 }
 
-void EepromHandler::end() {
+void EepromHandler::end()
+{
 	EEPROM.end();
 }
 

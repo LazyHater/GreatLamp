@@ -11,11 +11,12 @@
 
 #include <EEPROM.h>
 
-class EepromHandler {
-public:
-	inline String getSsid() {return _ssid;}
-	inline String getPassword() {return _password;}
-	inline String getMqttHost() {return _mqtt_host;}
+class EepromHandler
+{
+  public:
+	inline String getSsid() { return _ssid; }
+	inline String getPassword() { return _password; }
+	inline String getMqttHost() { return _mqtt_host; }
 	bool clearWifiParameters();
 	bool writeWifiParameters(String ssid, String password);
 	bool readWiFiParameters();
@@ -25,7 +26,7 @@ public:
 	void init();
 	void end();
 
-private:
+  private:
 	String _ssid;
 	String _password;
 	String _mqtt_host;

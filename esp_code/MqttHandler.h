@@ -8,9 +8,11 @@
 #include "EepromHandler.h"
 #include "Lamp.h"
 #include "Deviceinfo.h"
+
 extern Lamp lamp;
 
-class MqttHandler {
+class MqttHandler
+{
 
 public:
   // MqttHandler(WiFiClient& espClient) : client(espClient) {}
@@ -25,12 +27,11 @@ public:
 
   bool isEnabled();
 
-  bool getState(); 
+  bool getState();
 
   static void updateLevel(int lv);
-  static void updateLevel2(int lv);
 
-  static void callback(char* topic, byte* payload, unsigned int length);
+  static void callback(char *topic, byte *payload, unsigned int length);
 
 private:
   char mqtt_host[65];
