@@ -19,6 +19,7 @@ Lamp::Lamp(const int read_pin, const int write_pin) : read_pin(read_pin), write_
 
 int Lamp::readLevel()
 {
+	return random(4); // TODO remove
 	int pwm_value = pulseIn(read_pin, HIGH, LAMP_PULSE_IN_TIME);
 	if (pwm_value == 0)
 	{
@@ -44,6 +45,7 @@ int Lamp::readLevel()
 
 void Lamp::handle(bool force)
 {
+	return; // TODO remove
 	static int last_level = 0;
 	static unsigned long lastCheckTime = 0;
 	if ((millis() - lastCheckTime > LAMP_HANDLE_LEVEL_CHECK_TIME) || force)

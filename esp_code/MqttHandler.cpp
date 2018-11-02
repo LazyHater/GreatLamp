@@ -90,18 +90,16 @@ void MqttHandler::handle()
 
 void MqttHandler::init()
 {
-  eepromHandler.init();
-  eepromHandler.readMqttHost();
-  eepromHandler.end();
+  espEepromSettings.read();
 
-  if (eepromHandler.getMqttHost().length() == 0)
+  if (strlen(espEepromSettings.getMqttHostname()) == 0)
   {
     enabled = false;
     return;
   }
 
-  strcpy(mqtt_host, eepromHandler.getMqttHost().c_str());
+  strcpy(this->mqtt_host, espEepromSettings.getMqttHostname());
 
-  mqttClient.setServer(mqtt_host, 1883);
+  mqttClient.setServer(this->mqtt_host, espEepromSettings.getMqttPort());
   mqttClient.setCallback(MqttHandler::callback);
 }

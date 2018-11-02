@@ -19,12 +19,12 @@ $ wget http://esp8266webform.local/ledoff
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include "FS.h"
+#include <EspEepromSettings.h>
+#include <Logger.h>
 
 #include "Parameters.h"
 #include "Debug.h"
 #include "Lamp.h"
-#include "EepromHandler.h"
 #include "MqttHandler.h"
 #include "Utils.h"
 #include "Html.h"
@@ -34,8 +34,8 @@ extern "C"
 }
 ESP8266WebServer server(HTTP_SERVER_PORT);
 WiFiClient espClient;
-// MqttHandler mqtt(espClient);
 MqttHandler mqtt;
+Logger logger;
 
 bool button_pressed_on_boot = false;
 
@@ -145,24 +145,37 @@ void handleRestart()
 
 void handleWifi()
 {
-  bool success = true;
+  bool success = true, changed = false;
 
-  eepromHandler.init();
-
-  if (server.hasArg("ssid") && server.hasArg("password"))
+  if (server.hasArg("ssid"))
   {
-    success = eepromHandler.writeWifiParameters(server.arg("ssid"), server.arg("password"));
+    success = success && (espEepromSettings.setWifiSsid(server.arg("ssid").c_str()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
+  }
+  if (server.hasArg("password"))
+  {
+    success = success && (espEepromSettings.setWifiPassword(server.arg("password").c_str()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
   }
 
-  eepromHandler.readWiFiParameters();
-  eepromHandler.end();
+  if (changed)
+  {
+    espEepromSettings.write();
+  }
 
+  espEepromSettings.read();
   if (success)
   {
     String json = "{";
     json += addJsonKeyValue("status", "ok") + ",";
-    json += addJsonKeyValue("ssid", eepromHandler.getSsid()) + ",";
-    json += addJsonKeyValue("password", eepromHandler.getPassword()) + ",";
+    json += addJsonKeyValue("ssid", espEepromSettings.getWifiSsid()) + ",";
+    json += addJsonKeyValue("password", espEepromSettings.getWifiPassword()) + ",";
     json += addJsonKeyValue("wifi_status", WL_STATUSES[WiFi.status()]) + ",";
     json += addJsonKeyValue("rssi", WiFi.RSSI()) + ",";
     json += addJsonKeyValue("localip", WiFi.localIP().toString()) + ",";
@@ -184,30 +197,72 @@ void handleWifi()
   {
     String json = "{";
     json += addJsonKeyValue("status", "error") + ",";
-    json += addJsonKeyValue("error", "Failed to set ssid and password for ssid:" + server.arg("ssid") + " password:" + server.arg("password"));
+    json += addJsonKeyValue("error", "Failed to set ssid or password for ssid:" + server.arg("ssid") + " password:" + server.arg("password"));
     json += "}";
     returnFailJSON(json);
   }
 }
 
+void handleFormat()
+{
+  espEepromSettings.format();
+  returnJSON(ok_msg);
+}
+
 void handleMqtt()
 {
-  bool success = true;
-  eepromHandler.init();
+
+  bool success = true, changed = false;
 
   if (server.hasArg("mqtt_host"))
   {
-    success = eepromHandler.writeMqttHost(server.arg("mqtt_host"));
+    success = success && (espEepromSettings.setMqttHostname(server.arg("mqtt_host").c_str()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
+  }
+  if (server.hasArg("mqtt_port"))
+  {
+    success = success && (espEepromSettings.setMqttPort(server.arg("mqtt_port").toInt()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
   }
 
-  eepromHandler.readMqttHost();
-  eepromHandler.end();
+  if (server.hasArg("mqtt_username"))
+  {
+    success = success && (espEepromSettings.setMqttUsername(server.arg("mqtt_username").c_str()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
+  }
+
+  if (server.hasArg("mqtt_password"))
+  {
+    success = success && (espEepromSettings.setMqttPassword(server.arg("mqtt_password").c_str()) == ESP_EEPROM_OK);
+    if (success)
+    {
+      changed = true;
+    }
+  }
+
+  if (changed)
+  {
+    espEepromSettings.write();
+  }
+  espEepromSettings.read();
 
   if (success)
   {
     String json = "{";
     json += addJsonKeyValue("status", "ok") + ",";
-    json += addJsonKeyValue("mqtt_host", eepromHandler.getMqttHost()) + ",";
+    json += addJsonKeyValue("mqtt_host", espEepromSettings.getMqttHostname()) + ",";
+    json += addJsonKeyValue("mqtt_port", espEepromSettings.getMqttPort()) + ",";
+    json += addJsonKeyValue("mqtt_username", espEepromSettings.getMqttUsername()) + ",";
+    json += addJsonKeyValue("mqtt_password", espEepromSettings.getMqttPassword()) + ",";
     json += addJsonKeyValue("mqtt_enabled", mqtt.isEnabled() ? "yes" : "no") + ",";
     json += addJsonKeyValue("mqtt_state", MQTT_STATUSES[mqtt.getState() + 4]);
     json += "}";
@@ -218,7 +273,7 @@ void handleMqtt()
   {
     String json = "{";
     json += addJsonKeyValue("status", "error") + ",";
-    json += addJsonKeyValue("error", "Failed to set " + server.arg("mqtt_host") + " as mqtt host.");
+    json += addJsonKeyValue("error", "Failed to set mqtt settings!");
     json += "}";
     returnFailJSON(json);
   }
@@ -230,13 +285,16 @@ void beginST()
   delay(100);
   WiFi.mode(WIFI_STA);
   wifi_station_set_hostname(HOSTNAME);
-  WiFi.begin(eepromHandler.getSsid().c_str(), eepromHandler.getPassword().c_str());
+  WiFi.begin(espEepromSettings.getWifiSsid(), espEepromSettings.getWifiPassword());
 
+  logger.debug("Connecting to %s\n", espEepromSettings.getWifiSsid());
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED)
   {
+    logger.debug(".");
     delay(500);
   }
+  logger.debug("Connected!\n");
 }
 
 void beginAP()
@@ -249,24 +307,34 @@ void beginAP()
 
 void setup(void)
 {
+
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   system_update_cpu_freq(SYS_CPU_160MHZ);
 
+  Serial.begin(115200); // TODO remove
+  logger.setLevel(logger.DEBUG);
+
   delay(BOOT_DELAY);
   button_pressed_on_boot = !digitalRead(BUTTON_PIN);
-  // button_pressed_on_boot = false;
-  eepromHandler.init();
-  eepromHandler.readWiFiParameters();
-  eepromHandler.readMqttHost();
-  eepromHandler.end();
+  button_pressed_on_boot = false; // TODO remove
 
-  if (button_pressed_on_boot || (eepromHandler.getSsid().length() == 0))
+  espEepromSettings.format();
+  if (espEepromSettings.read() != ESP_EEPROM_OK)
   {
+    logger.error("Formatting needed...");
+    espEepromSettings.format();
+  }
+
+  if (button_pressed_on_boot || (strlen(espEepromSettings.getWifiSsid()) == 0) || (strlen(espEepromSettings.getWifiPassword()) == 0))
+  {
+    logger.debug("Begin AP\n");
+
     beginAP();
   }
   else
   {
+    logger.debug("Begin ST\n");
     beginST();
   }
 
@@ -283,6 +351,7 @@ void setup(void)
   server.on("/api/mqtt", handleMqtt);
   server.on("/api/wifi", handleWifi);
   server.on("/api/restart", handleRestart);
+  server.on("/api/format", handleFormat);
 
   server.onNotFound(handleNotFound);
 

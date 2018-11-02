@@ -5,7 +5,7 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include "EepromHandler.h"
+#include <EspEepromSettings.h>
 #include "Lamp.h"
 #include "Deviceinfo.h"
 

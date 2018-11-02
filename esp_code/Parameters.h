@@ -16,9 +16,9 @@ const int LAMP_HANDLE_LEVEL_CHECK_TIME = 5000; // every 5000ms state of lamp wou
 const int BUTTON_PIN = 1;
 const int HTTP_SERVER_PORT = 80;
 
-#define HOSTNAME "xD-Lamp"
-#define SOFT_AP_SSID "xD-Lamp"
-#define MDNS_NAME "xD-Lamp"
+#define HOSTNAME "xD-Lamp2"
+#define SOFT_AP_SSID "xD-Lamp2"
+#define MDNS_NAME "xD-Lamp2"
 
 #define BOOT_DELAY 2000
 #endif /* PARAMETERS_H */

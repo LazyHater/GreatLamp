@@ -119,6 +119,7 @@ def process_html_file(path):
         f.write(content)
         
     logging.info('Mimifing')
+    print(mimify_command.format(out_path))
     mimified = check_output(mimify_command.format(out_path).split())
     with open(out_path + '.min', 'w') as f:
         f.write(mimified)
