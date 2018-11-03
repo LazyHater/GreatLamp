@@ -92,7 +92,7 @@ void MqttHandler::init()
 {
   espEepromSettings.read();
 
-  if (strlen(espEepromSettings.getMqttHostname()) == 0)
+  if ((strlen(espEepromSettings.getMqttHostname()) == 0) || (espEepromSettings.getMqttPort() == 0))
   {
     enabled = false;
     return;

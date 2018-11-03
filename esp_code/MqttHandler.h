@@ -15,8 +15,6 @@ class MqttHandler
 {
 
 public:
-  // MqttHandler(WiFiClient& espClient) : client(espClient) {}
-
   void init();
 
   void reconnect();
