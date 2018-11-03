@@ -2,6 +2,7 @@
 #define WIFI_HANDLER_H
 
 #include <ESP8266WebServer.h>
+#include <ArduinoJson.h>
 #include "Utils.h"
 #include "Html.h"
 String ok_msg = "{\"status\": \"ok\"}";
@@ -15,7 +16,13 @@ class WifiHandler
   public:
     void init()
     {
-        server.on("/", std::bind(&WifiHandler::handleRoot, this));
+        // server.on("/", std::bind(&WifiHandler::handleRoot, this));
+        server.on("/", [this]() {
+            this->returnHtml(INDEX_HTML);
+        });
+        server.on("/docs", [this]() {
+            this->returnHtml(DOCS_HTML);
+        });
         server.on("/docs", std::bind(&WifiHandler::handleDoc, this));
         server.on("/api/lamp", std::bind(&WifiHandler::handleLamp, this));
         server.on("/api/lamp/set", std::bind(&WifiHandler::handleLampSet, this));
@@ -30,23 +37,11 @@ class WifiHandler
         server.begin();
     }
 
-    void returnHomepage()
+    void returnHtml(const char *html, int code = 200)
     {
         server.sendHeader("Connection", "close");
         server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/html", INDEX_HTML);
-    }
-
-    void handleRoot()
-    {
-        returnHomepage();
-    }
-
-    void handleDoc()
-    {
-        server.sendHeader("Connection", "close");
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/html", DOCS_HTML);
+        server.send(code, "text/html", html);
     }
 
     void handleNotFound()
@@ -73,11 +68,7 @@ class WifiHandler
             String level_s = server.arg("level");
             if (!isValidNumber(level_s))
             {
-                String json = "{";
-                json += addJsonKeyValue("status", "error") + ",";
-                json += addJsonKeyValue("error", "LEVEL VALUE IS NOT A VALID INTEGER:" + level_s);
-                json += "}";
-                returnFailJSON(json);
+                returnJsonError("Level value is not an integer.");
                 return;
             }
 
@@ -85,47 +76,41 @@ class WifiHandler
 
             if (level < 0 || level > 3)
             {
-                String json = "{";
-                json += addJsonKeyValue("status", "error") + ",";
-                json += addJsonKeyValue("error", "Level value out of range <0, 3>:" + String(level));
-                json += "}";
-                returnFailJSON(json);
+                returnJsonError("Level value out of range <0, 3>");
                 return;
             }
 
             lamp.setLevel(level);
         }
 
-        String json = "{";
-        json += addJsonKeyValue("status", "ok") + ",";
-        json += addJsonKeyValue("level", lamp.readLevel());
-        json += "}";
-        returnJSON(json);
+        returnLampLevel();
     }
 
     void handleLampToggle()
     {
         lamp.toggle();
-
-        String json = "{";
-        json += addJsonKeyValue("status", "ok") + ",";
-        json += addJsonKeyValue("level", lamp.readLevel());
-        json += "}";
-        returnJSON(json);
+        returnLampLevel();
     }
 
     void handleLamp()
     {
-        String json = "{";
-        json += addJsonKeyValue("status", "ok") + ",";
-        json += addJsonKeyValue("level", lamp.readLevel());
-        json += "}";
-        returnJSON(json);
+        returnLampLevel();
+    }
+
+    void returnLampLevel()
+    {
+
+        StaticJsonBuffer<128> jsonBuffer;
+        JsonObject &root = jsonBuffer.createObject();
+        root["level"] = lamp.readLevel();
+        returnJson(root);
     }
 
     void handleRestart()
     {
-        returnJSON(ok_msg);
+        StaticJsonBuffer<128> jsonBuffer;
+        JsonObject &root = jsonBuffer.createObject();
+        returnJson(root);
 
         ESP.restart();
     }
@@ -159,41 +144,38 @@ class WifiHandler
         espEepromSettings.read();
         if (success)
         {
-            String json = "{";
-            json += addJsonKeyValue("status", "ok") + ",";
-            json += addJsonKeyValue("ssid", espEepromSettings.getWifiSsid()) + ",";
-            json += addJsonKeyValue("password", espEepromSettings.getWifiPassword()) + ",";
-            json += addJsonKeyValue("wifi_status", WL_STATUSES[WiFi.status()]) + ",";
-            json += addJsonKeyValue("rssi", WiFi.RSSI()) + ",";
-            json += addJsonKeyValue("localip", WiFi.localIP().toString()) + ",";
-            json += addJsonKeyValue("subnetmask", WiFi.subnetMask().toString()) + ",";
-            json += addJsonKeyValue("gatewayip", WiFi.gatewayIP().toString()) + ",";
-            json += addJsonKeyValue("dnsip", WiFi.dnsIP().toString()) + ",";
-            json += addJsonKeyValue("hostname", WiFi.hostname()) + ",";
-            json += addJsonKeyValue("bssid", WiFi.BSSIDstr()) + ",";
-            json += addJsonKeyValue("macaddress", WiFi.macAddress()) + ",";
-            json += addJsonKeyValue("channel", WiFi.channel()) + ",";
-            json += addJsonKeyValue("cpufreq", system_get_cpu_freq()) + ",";
-            json += addJsonKeyValue("rstreason", RST_REASONS[system_get_rst_info()->reason]) + ",";
-            json += addJsonKeyValue("phymode", PHY_MODE_NAMES[wifi_get_phy_mode()]);
+            StaticJsonBuffer<512> jsonBuffer;
+            JsonObject &root = jsonBuffer.createObject();
+            root["ssid"] = espEepromSettings.getWifiSsid();
+            root["password"] = espEepromSettings.getWifiPassword();
+            root["wifi_status"] = WL_STATUSES[WiFi.status()];
+            root["rssi"] = WiFi.RSSI();
+            root["localip"] = WiFi.localIP().toString();
+            root["subnetmask"] = WiFi.subnetMask().toString();
+            root["gatewayip"] = WiFi.gatewayIP().toString();
+            root["dnsip"] = WiFi.dnsIP().toString();
+            root["hostname"] = WiFi.hostname();
+            root["bssid"] = WiFi.BSSIDstr();
+            root["macaddress"] = WiFi.macAddress();
+            root["channel"] = WiFi.channel();
+            root["phymode"] = PHY_MODE_NAMES[wifi_get_phy_mode()];
+            root["cpufreq"] = system_get_cpu_freq();
+            root["rstreason"] = RST_REASONS[system_get_rst_info()->reason];
 
-            json += "}";
-            returnJSON(json);
+            returnJson(root);
         }
         else
         {
-            String json = "{";
-            json += addJsonKeyValue("status", "error") + ",";
-            json += addJsonKeyValue("error", "Failed to set ssid or password for ssid:" + server.arg("ssid") + " password:" + server.arg("password"));
-            json += "}";
-            returnFailJSON(json);
+            returnJsonError("Failed to set ssid or password.");
         }
     }
 
     void handleFormat()
     {
         espEepromSettings.format();
-        returnJSON(ok_msg);
+        StaticJsonBuffer<128> jsonBuffer;
+        JsonObject &root = jsonBuffer.createObject();
+        returnJson(root);
     }
 
     void handleMqtt()
@@ -244,25 +226,20 @@ class WifiHandler
 
         if (success)
         {
-            String json = "{";
-            json += addJsonKeyValue("status", "ok") + ",";
-            json += addJsonKeyValue("mqtt_host", espEepromSettings.getMqttHostname()) + ",";
-            json += addJsonKeyValue("mqtt_port", espEepromSettings.getMqttPort()) + ",";
-            json += addJsonKeyValue("mqtt_username", espEepromSettings.getMqttUsername()) + ",";
-            json += addJsonKeyValue("mqtt_password", espEepromSettings.getMqttPassword()) + ",";
-            json += addJsonKeyValue("mqtt_enabled", mqtt.isEnabled() ? "yes" : "no") + ",";
-            json += addJsonKeyValue("mqtt_state", MQTT_STATUSES[mqtt.getState() + 4]);
-            json += "}";
 
-            returnJSON(json);
+            StaticJsonBuffer<512> jsonBuffer;
+            JsonObject &root = jsonBuffer.createObject();
+            root["mqtt_host"] = espEepromSettings.getMqttHostname();
+            root["mqtt_port"] = espEepromSettings.getMqttPort();
+            root["mqtt_username"] = espEepromSettings.getMqttUsername();
+            root["mqtt_password"] = espEepromSettings.getMqttPassword();
+            root["mqtt_enabled"] = mqtt.isEnabled() ? "yes" : "no";
+            root["mqtt_state"] = MQTT_STATUSES[mqtt.getState() + 4];
+            returnJson(root);
         }
         else
         {
-            String json = "{";
-            json += addJsonKeyValue("status", "error") + ",";
-            json += addJsonKeyValue("error", "Failed to set mqtt settings!");
-            json += "}";
-            returnFailJSON(json);
+            returnJsonError("Failed to set mqtt settings!");
         }
     }
 

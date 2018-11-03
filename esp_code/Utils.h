@@ -9,18 +9,27 @@
 
 extern ESP8266WebServer server;
 
-void returnFailJSON(String &msg)
+void returnJson(JsonObject &root)
 {
+    root["status"] = "ok";
+    String json;
+    root.printTo(json);
     server.sendHeader("Connection", "close");
     server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(500, "application/json", msg);
+    server.send(200, "application/json", json);
 }
 
-void returnJSON(String &msg)
+void returnJsonError(String error)
 {
+    StaticJsonBuffer<256> jsonBuffer;
+    JsonObject &root = jsonBuffer.createObject();
+    root["status"] = "error";
+    root["error"] = error;
+    String json;
+    root.printTo(json);
     server.sendHeader("Connection", "close");
     server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", msg);
+    server.send(500, "application/json", json);
 }
 
 bool isValidNumber(String &s)
